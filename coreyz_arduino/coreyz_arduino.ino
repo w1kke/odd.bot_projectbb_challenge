@@ -264,6 +264,8 @@ void move_down() {
 
 void command_callback(const std_msgs::String &cmd) {
   CLR(PORTH, IS_READY_PIN_PORTH);
+  Serial1.print("Command callback: ");
+  Serial1.println(cmd.data);
   steppers_high_power();
 
   if (strcmp(cmd.data, "home") == 0) {
@@ -289,7 +291,10 @@ void command_callback(const std_msgs::String &cmd) {
 */
 void move_callback(const std_msgs::Int32MultiArray &msg) {
   CLR(PORTH, IS_READY_PIN_PORTH);
-
+  Serial1.print("Move callback goal y: ");
+  Serial1.print(  msg.data[1]);
+  Serial1.print(", z: ");
+  Serial1.println(  msg.data[0]);
   // Calculate the goal in steps per axis from the MoveIt command
   long y_goal = min(max(-MAX_Y_POS_STEPS, msg.data[1]), MAX_Y_POS_STEPS);
   long z_goal = min(max(-MAX_Z_POS_STEPS, msg.data[0]), MAX_Z_POS_STEPS);
@@ -324,7 +329,7 @@ void move_callback(const std_msgs::Int32MultiArray &msg) {
   bool YZswap = true;                   // Used for motor decoding
   if (abs(dy) >= abs(dz)) YZswap = false;
 
-  steppers_low_power();
+  steppers_high_power();
 
   // Pretend we are always in octant 0
   for (long i = 0; i < longest; i++) {
@@ -503,7 +508,7 @@ void loop() {
       // Process command in sdata.
       switch ( sdata.charAt(0) ) {
         case 'h':
-          Serial1.println("Start Process");
+          Serial1.println("Start Home");
           CLR(PORTH, IS_READY_PIN_PORTH);
           steppers_high_power();
           move_home();
