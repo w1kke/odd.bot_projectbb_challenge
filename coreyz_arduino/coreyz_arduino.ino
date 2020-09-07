@@ -460,9 +460,9 @@ void setup() {
   // Initialize the distance sensor
   sensor.setTimeout(500);
   Serial1.println("setting up sensor");
-  //  if (!sensor.init()) { // TODO: we removed the sensor
-  //    while (1);
-  //  }
+    if (!sensor.init()) { // TODO: we removed the sensor
+      Serial1.println("FAIL! setting up sensor");
+    }
   Serial1.println("Sensor setup done");
   // Set distance mode and timing budget (uS)
   sensor.setDistanceMode(VL53L1X::Short);
